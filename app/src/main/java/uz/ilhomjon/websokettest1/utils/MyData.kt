@@ -4,6 +4,8 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.app.PendingIntent.FLAG_IMMUTABLE
+import android.app.PendingIntent.FLAG_NO_CREATE
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -20,8 +22,11 @@ object MyData {
         createNotificationChannel(context, channelId, "My Channel")
 
         val notificationIntent = Intent(context, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0)
-
+        val pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.getActivity(context, 0, notificationIntent, FLAG_IMMUTABLE)
+        } else {
+            PendingIntent.getActivity(context, 0, notificationIntent, FLAG_NO_CREATE)
+        }
         return Notification.Builder(context, channelId)
             .setSmallIcon(R.drawable.ic_launcher_background) // Xabarnomaning ikonasi
             .setContentTitle(title) // Xabarnomaning sarlavhasi
